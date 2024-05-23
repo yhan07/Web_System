@@ -49,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check if username exists, if yes then verify password
                 if ($stmt->num_rows == 1) {
                     // Bind result variables
-                    $stmt->bind_result($username, $hashed_password);
+                    $stmt->bind_result($username, $stored_password);
                     if ($stmt->fetch()) {
-                        if (password_verify($password, $hashed_password)) {
+                        if ($password == $stored_password) {
                             // Password is correct, start a new session
                             session_start();
 
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["username"] = $username;
 
                             // Redirect user to the dashboard
-                            header("location: dashboard.php");
+                            header("location: index.php");
                         } else {
                             // Display an error message if password is not valid
                             $password_err = "The password you entered was not valid.";
@@ -170,6 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="login-container">
         <div class="login-header">
             <img src="images/logo.svg" alt="BookWormer Logo">
+            <h1>BookWormer</h1>
         </div>
         <div class="login-form">
             <h2>Login</h2>
@@ -182,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                <input type="text" name="username" placeholder="Username" value="<?php echo $username; ?>" required>
+                <input type="text" name="username" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" required>
                 <input type="password" name="password" placeholder="Password" required>
                 <button type="submit">Login</button>
             </form>
